@@ -1,0 +1,66 @@
+package server; 
+import java.io.*; 
+import java.net.*; 
+import java.sql.*; 
+import java.util.*; 
+import database.DBConnection; 
+ 
+public class TaskServer { // Class name updated 
+public static void main(String[] args) { 
+try (ServerSocket serverSocket = new ServerSocket(6060)) { 
+System.out.println("   Task Assignment Server running on port 6060..."); // 
+Output updated 
+while (true) { 
+Socket socket = serverSocket.accept(); 
+new ClientHandler(socket).start(); 
+} 
+} catch (Exception e) { 
+e.printStackTrace(); 
+} 
+} 
+} 
+class ClientHandler extends Thread { 
+private Socket socket; 
+public ClientHandler(Socket socket) { 
+this.socket = socket; 
+} 
+public void run() { 
+try (ObjectInputStream in = new 
+ObjectInputStream(socket.getInputStream()); 
+ObjectOutputStream out = new 
+ObjectOutputStream(socket.getOutputStream())) { 
+String command = (String) in.readObject(); 
+if (command.equals("ADD_TASK")) { // Command updated 
+String title = (String) in.readObject(); // Data fields updated 
+String description = (String) in.readObject(); 
+String dueDate = (String) in.readObject(); 
+String status = (String) in.readObject(); 
+PreparedStatement ps = 
+DBConnection.getConnection().prepareStatement( 
+"INSERT INTO tasks(user_id, title, description, due_date, status) VALUES(1, ?, 
+?, ?, ?)"); // SQL updated 
+ps.setString(1, title); 
+ps.setString(2, description); 
+ps.setString(3, dueDate); 
+ps.setString(4, status); 
+ps.executeUpdate(); 
+out.writeObject("Task added successfully!"); // Message updated 
+} 
+else if (command.equals("VIEW_ALL_TASKS")) { // Command updated 
+ArrayList list = new ArrayList<>(); 
+Statement st = DBConnection.getConnection().createStatement(); 
+ResultSet rs = st.executeQuery("SELECT * FROM tasks"); // SQL updated 
+while (rs.next()) { 
+list.add(rs.getString("title") +  
+" - Status: " + rs.getString("status") 
++ 
+" on " + rs.getString("due_date") + " (Assigned to ID: " + 
+rs.getInt("user_id") + ")"); // Output updated 
+} 
+out.writeObject(list); 
+} 
+} catch (Exception e) { 
+e.printStackTrace(); 
+} 
+} 
+} 
