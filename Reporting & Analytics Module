@@ -1,0 +1,22 @@
+package report; 
+import java.sql.*; 
+import database.DBConnection; 
+ 
+public class TaskReportGenerator { // Class name updated 
+public static void generateStatusReport() { // Method name updated 
+try { 
+Connection con = DBConnection.getConnection(); 
+Statement st = con.createStatement(); 
+ResultSet rs = st.executeQuery("SELECT status, COUNT(id) AS total_count 
+FROM tasks GROUP BY status"); // SQL updated 
+System.out.println("\nTask Summary by Status:"); // Output updated 
+System.out.println("--------------------------------"); 
+while (rs.next()) { 
+System.out.println(rs.getString("status") + " : " + rs.getInt("total_count") + " 
+tasks"); // Output updated 
+} 
+} catch (Exception e) { 
+e.printStackTrace(); 
+} 
+} 
+}
