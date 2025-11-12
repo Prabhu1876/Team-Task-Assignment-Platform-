@@ -1,0 +1,22 @@
+package model; 
+import java.io.Serializable; 
+ 
+public class Task implements Serializable { 
+private int id; 
+private int userId; // New field for assignee ID 
+private String title, description, dueDate, status; // Fields updated 
+ 
+public Task(int id, int userId, String title, String description, String dueDate, String 
+status) { 
+this.id = id; 
+this.userId = userId; 
+this.title = title; 
+this.description = description; 
+this.dueDate = dueDate; 
+this.status = status; 
+} 
+public String toString() { 
+return "Title: " + title + " | Status: " + status + 
+" | Due Date: " + dueDate + " | Assignee ID: " + userId; 
+} 
+}
